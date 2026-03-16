@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: system-ui, -apple-system, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .prose pre {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto;
+  }
+  
+  .prose code {
+    @apply bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded text-sm;
+  }
+  
+  .prose pre code {
+    @apply bg-transparent text-gray-100 p-0;
+  }
+  
+  .prose img {
+    @apply rounded-lg shadow-md;
+  }
+  
+  .prose a {
+    @apply text-blue-600 hover:text-blue-800 underline;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-blue-500 pl-4 italic text-gray-600;
+  }
 }
