@@ -1,6 +1,16 @@
 import Link from 'next/link'
 
-// Simple version without complex types
+// Generate all possible tag paths at build time
+export async function generateStaticParams() {
+  return [
+    { tag: 'hello' },
+    { tag: 'welcome' },
+    { tag: 'nextjs' },
+    { tag: 'markdown' },
+    { tag: 'tutorial' }
+  ]
+}
+
 export default function TagPage({ params }: any) {
   const tag = params?.tag || ''
   
