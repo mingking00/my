@@ -1,5 +1,38 @@
-import Link from 'next/link'
-import { getAllTags } from '@/lib/posts'
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+
+// Inline functions
+function getSortedPostsData() {
+  const postsDirectory = path.join(process.cwd(), 'content/posts')
+  if (!fs.existsSync(postsDirectory)) return []
+  
+  const fileNames = fs.readdirSync(postsDirectory)
+  return fileNames
+    .filter((fileName) => fileName.endsWith('.md'))
+    .map((fileName) => {
+      const id = fileName.replace(/\.md$/, '')
+      const fullPath = path.join(postsDirectory, fileName)
+      const fileContents = fs.readFileSync(fullPath, 'utf8')
+      const matterResult = matter(fileContents)
+      return {
+        id,
+        title: matterResult.data.title || 'Untitled',
+        date: matterResult.data.date || new Date().toISOString().split('T')[0],
+        excerpt: matterResult.data.excerpt || matterResult.content.slice(0, 150) + '...',
+        tags: matterResult.data.tags || [],
+      }
+    })
+}
+
+function getAllTags() {
+  const posts = getSortedPostsData()
+  const tagSet = new Set<string>()
+  posts.forEach((post) => {
+    post.tags.forEach((tag: string) => tagSet.add(tag))
+  })
+  return Array.from(tagSet).sort()
+}
 
 export default function TagsPage() {
   const tags = getAllTags()
@@ -13,13 +46,9 @@ export default function TagsPage() {
       ) : (
         <div className="flex flex-wrap gap-3">
           {tags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/tags/${tag}`}
-              className="px-6 py-3 bg-white rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 transition-all shadow-sm hover:shadow-md"
-            >
+            <span key={tag} className="px-6 py-3 bg-white rounded-lg text-gray-700 border shadow-sm">
               #{tag}
-            </Link>
+            </span>
           ))}
         </div>
       )}
